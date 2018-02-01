@@ -1,29 +1,48 @@
 <template>
     <div class="absolute fit">
         <vue-particles class="absolute fit" color="#dedede"></vue-particles>
-        <div class="row full-height">
-            <div class="layout-padding">
-                <q-search inverted class="search-fade larger" color="grey-9" v-model="search" />
+        <div class="row justify-center items-center full-height">
+            <div>
+                <q-input inverted class="search-fade larger" color="grey-9" v-model="searchText" :placeholder="searchPlaceholder" />
+                <q-btn @click="performQuery" icon="search" class="block full-width bg-grey-10 text-grey-1">{{ searchTextLabel }}</q-btn>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { QSearch } from 'quasar'
+import {
+  QInput,
+  QBtn
+} from 'quasar'
 
 export default {
   name: 'Search',
   components: {
-    QSearch
+    QInput,
+    QBtn
   },
   data () {
     return {
-      search: ''
+      resultPageName: 'result',
+      searchPlaceholder: 'Analyze word...',
+      searchTextLabel: 'Search',
+      searchText: ''
     }
   },
-  computed: {},
-  methods: {}
+  methods: {
+    performQuery (e, done) {
+      // console.log(this)
+      var searchText = this.searchText
+      var resultPageName = this.resultPageName
+      this.$router.push({
+        name: resultPageName,
+        params: {
+          searchText
+        }
+      })
+    }
+  }
 }
 </script>
 

@@ -31,7 +31,14 @@ export default new VueRouter({
       children: [
         {
           path: '',
+          name: 'search',
           component: load('Search')
+        },
+        {
+          path: 'result',
+          name: 'result',
+          component: load('Result'),
+          props: true
         }
       ]
     },
