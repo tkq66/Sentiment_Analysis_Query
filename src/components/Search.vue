@@ -32,7 +32,6 @@ export default {
   },
   methods: {
     performQuery (e, done) {
-      // console.log(this)
       var searchText = this.searchText
       var resultPageName = this.resultPageName
       this.$router.push({
