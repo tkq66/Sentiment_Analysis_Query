@@ -1,19 +1,13 @@
 <template>
-  <q-layout ref="layout" view="hhh lpr fff">
+  <q-layout ref="layout" view="hhh lpr fff" class="bg-grey-8">
 
-      <q-toolbar slot="header">
+      <q-toolbar slot="header" color="grey-10">
         <q-toolbar-title>
             Sentiment Analysis Query
         </q-toolbar-title>
       </q-toolbar>
 
       <router-view></router-view>
-
-      <!-- <div class="col justify-center">
-        <div class="">
-          <q-search v-model="search" />
-        </div>
-      </div> -->
 
   </q-layout>
 </template>

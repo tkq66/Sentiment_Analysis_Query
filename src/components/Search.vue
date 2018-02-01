@@ -1,17 +1,16 @@
 <template>
-    <div class="absolute full-height full-width">
+    <div class="absolute fit">
+        <vue-particles class="absolute fit" color="#dedede"></vue-particles>
         <div class="row full-height">
             <div class="layout-padding">
-                <q-search v-model="search" />
+                <q-search inverted class="search-fade larger" color="grey-9" v-model="search" />
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import {
-  QSearch
-} from 'quasar'
+import { QSearch } from 'quasar'
 
 export default {
   name: 'Search',
@@ -29,4 +28,17 @@ export default {
 </script>
 
 <style>
+
+    .search-fade{
+        opacity: 0.5;
+    }
+
+    .larger{
+        font-size: 2em;
+    }
+
+    input{
+        height: auto !important;
+    }
+
 </style>
