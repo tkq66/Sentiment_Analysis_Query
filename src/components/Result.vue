@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { Analysis } from 'src/api'
+
 export default {
   name: 'Result',
   props: [
@@ -16,7 +18,20 @@ export default {
     }
   },
   computed: {},
-  methods: {}
+  methods: {},
+  created () {
+    Analysis.get({ query_phrase: this.searchText })
+      .then(
+        response => {
+          console.log(response)
+        }
+      )
+      .catch(
+        error => {
+          console.log(error)
+        }
+      )
+  }
 }
 </script>
 
