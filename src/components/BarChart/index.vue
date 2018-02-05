@@ -1,11 +1,12 @@
 <template>
-  <div>
-      {{ categorizedDataFrequency }}
+  <div :id="parentId" class="fit foreground">
+      <div :id="chartId"></div>
   </div>
 </template>
 
 <script>
 import colormap from 'colormap'
+import * as d3 from 'd3'
 
 export default {
   name: 'BarChart',
@@ -21,7 +22,8 @@ export default {
   },
   data () {
     return {
-      valueRange: [],
+      parentId: 'bar_chart_parent_' + Date.now(),
+      chartId: 'bar_chart_' + Date.now(),
       range: 2,
       min: -1,
       max: 1,
@@ -96,10 +98,58 @@ export default {
              ((value >= min) && (value < max))
     }
   },
-  created () {
+  mounted () {
+    let margin = 20
+    let goldenRatio = 1.61803398875
+    let chartWidth = document.getElementById(this.parentId).offsetWidth - (margin * 2)
+    let chartHeight = chartWidth / goldenRatio
+    // let barPadding = 2
+    // let barWidth = (chartWidth / this.bin) - barPadding
+    let yScale = d3.scaleLinear()
+      .domain([this.dataFreqMin, this.dataFreqMax])
+      .range([0, chartHeight])
+    let xScale = d3.scaleBand()
+      .domain([0, this.bin])
+      .range([0, chartWidth])
+
+    console.log(document.getElementById(this.parentId).offsetWidth)
+    console.log(chartWidth)
+
+    let svg = d3.select('#' + this.chartId)
+      .style('position', 'relative')
+      .style('width', chartWidth + 'px')
+      .style('height', chartHeight + 'px')
+      .style('top', margin + 'px')
+      .style('left', margin + 'px')
+      .style('right', margin + 'px')
+      .style('background', 'white')
+
+    svg.selectAll('rect')
+      .data(this.categorizedDataFrequency)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d, i) => xScale(d))
+      .attr('y', (d, i) => chartHeight)
+      .attr('width', (d, i) => xScale.bandwidth())
+      .attr('fill', (d, i) => this.colors[i])
+      .attr('height', 0)
+      .transition()
+      .duration(1500)
+      .attr('y', function (d, i) {
+        return chartHeight - yScale(d)
+      })
+      .attr('height', function (d, i) {
+        return yScale(d)
+      })
   }
 }
 </script>
 
 <style>
+
+    .foreground{
+        z-index: 999;
+    }
+
 </style>

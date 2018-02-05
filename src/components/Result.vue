@@ -1,8 +1,9 @@
 <template>
     <div class="absolute fit">
-        <vue-particles class="absolute fit background" color="#dedede"></vue-particles>
-        <div class="row foreground">
-            <bar-chart :tweetData="sentimentTweets"></bar-chart>
+        <vue-particles class="absolute fit" color="#dedede"></vue-particles>
+        <div class="row">
+            <div class="col">PIE-CHART</div>
+            <bar-chart class="col" :tweetData="sentimentTweets"></bar-chart>
         </div>
     </div>
 </template>
@@ -66,7 +67,7 @@ export default {
     }
 
     .foreground{
-        z-index: 1;
+        z-index: 999;
     }
 
 </style>
