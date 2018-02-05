@@ -1,7 +1,9 @@
 <template>
     <div class="absolute fit">
-        <vue-particles class="absolute fit" color="#dedede"></vue-particles>
-        {{ searchText }}
+        <vue-particles class="absolute fit background" color="#dedede"></vue-particles>
+        <div class="row foreground">
+            <bar-chart :tweetData="sentimentTweets"></bar-chart>
+        </div>
     </div>
 </template>
 
@@ -11,38 +13,27 @@ import {
   QSpinnerGrid
 } from 'quasar'
 import { Analysis } from 'src/api'
-import colormap from 'colormap'
+import BarChart from './BarChart'
 
 export default {
   name: 'Result',
   props: [
     'searchText'
   ],
+  components: {
+    BarChart
+  },
   data () {
     return {
       positiveSentimentTweets: [],
       neutralSentimentTweets: [],
-      negativeSentimentTweets: []
+      negativeSentimentTweets: [],
+      sentimentTweets: []
     }
   },
   computed: {},
   methods: {},
   created () {
-    let colors = colormap({
-      colormap: [
-        {
-          index: 0,
-          rgb: [96, 255, 157, 1]
-        },
-        {
-          index: 1,
-          rgb: [255, 96, 96, 1]
-        }
-      ],
-      nshades: 50,
-      format: 'hex'
-    })
-    console.log(colors)
     Loading.show({
       spinner: QSpinnerGrid,
       message: 'Analyzing twitter sentiments...'
@@ -54,6 +45,7 @@ export default {
           self.positiveSentimentTweets = response.body['1']
           self.neutralSentimentTweets = response.body['0']
           self.negativeSentimentTweets = response.body['-1']
+          self.sentimentTweets = self.positiveSentimentTweets.concat(self.neutralSentimentTweets.concat(self.negativeSentimentTweets))
           Loading.hide()
         }
       )
@@ -68,4 +60,13 @@ export default {
 </script>
 
 <style>
+
+    .background{
+        z-index: 0;
+    }
+
+    .foreground{
+        z-index: 1;
+    }
+
 </style>
