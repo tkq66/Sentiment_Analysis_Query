@@ -153,6 +153,7 @@ export default {
         .attr('width', chartWidth)
         .attr('height', chartHeight)
         .attr('transform', 'translate(' + [this.margin.left, this.margin.top] + ')')
+
       let bar = chartLayer.selectAll('.bar').data(data)
       bar.exit()
         .remove()
@@ -168,6 +169,7 @@ export default {
         .transition(transition)
         .attr('height', d => chartHeight - yScale(d.count) + this.delta)
         .attr('transform', d => 'translate(' + [xScale(d.bin), yScale(d.count)] + ')')
+
       let yAxis = d3.axisLeft(yScale)
         .tickSizeInner(-chartWidth)
       svg.append('g')
