@@ -22,7 +22,7 @@ export default {
   props: {
     bin: {
       type: Number,
-      default: 72
+      default: 100
     },
     tweetData: {
       type: Array,
@@ -41,10 +41,10 @@ export default {
       range: 2,
       min: -1,
       max: 1,
-      delta: 0.01,
+      delta: 1,
       positiveColorEndPoint: [96, 255, 157, 1],
       negativeColorEndPoint: [255, 96, 96, 1],
-      margin: { top: 5, left: 5, bottom: 5, right: 5 },
+      margin: { top: 10, left: 20, bottom: 10, right: 10 },
       goldenRatio: 1.61803398875,
       isReadyToPlot: false
     }
@@ -166,8 +166,16 @@ export default {
         .attr('transform', d => 'translate(' + [xScale(d.bin), chartHeight] + ')')
       chartLayer.selectAll('.bar')
         .transition(transition)
-        .attr('height', d => chartHeight - yScale(d.count))
+        .attr('height', d => chartHeight - yScale(d.count) + this.delta)
         .attr('transform', d => 'translate(' + [xScale(d.bin), yScale(d.count)] + ')')
+      let yAxis = d3.axisLeft(yScale)
+        .tickSizeInner(-chartWidth)
+      svg.append('g')
+        .classed('axisLayer', true)
+        .append('g')
+        .attr('transform', 'translate(' + [this.margin.left, this.margin.top] + ')')
+        .attr('class', 'axis y')
+        .call(yAxis)
     }
   },
   mounted () {
@@ -180,6 +188,11 @@ export default {
 
     .foreground{
         z-index: 999;
+    }
+
+    .tick line {
+        stroke-dasharray: 2 2 ;
+        stroke: #ccc;
     }
 
 </style>
