@@ -26,14 +26,20 @@ export default {
   },
   data () {
     return {
-      positiveSentimentTweets: [],
-      neutralSentimentTweets: [],
-      negativeSentimentTweets: [],
+      isFilterNeutral: true,
       sentimentTweets: []
     }
   },
-  computed: {},
-  methods: {},
+  methods: {
+    setData (data) {
+      if (this.isFilterNeutral) {
+        this.sentimentTweets = data.filter(d => d.polarity !== 0)
+      }
+      else {
+        this.sentimentTweets = data
+      }
+    }
+  },
   created () {
     Loading.show({
       spinner: QSpinnerGrid,
@@ -43,10 +49,7 @@ export default {
     Analysis.get({ query_phrase: this.searchText })
       .then(
         response => {
-          self.positiveSentimentTweets = response.body['1']
-          self.neutralSentimentTweets = response.body['0']
-          self.negativeSentimentTweets = response.body['-1']
-          self.sentimentTweets = self.positiveSentimentTweets.concat(self.neutralSentimentTweets.concat(self.negativeSentimentTweets))
+          self.setData(response.body)
           Loading.hide()
         }
       )
