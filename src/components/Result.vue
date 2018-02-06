@@ -3,7 +3,7 @@
         <vue-particles class="absolute fit" color="#dedede"></vue-particles>
         <div class="row">
             <div class="col">PIE-CHART</div>
-            <bar-chart class="col" :tweetData="sentimentTweets"></bar-chart>
+            <bar-chart class="col" :tweetData="sentimentTweets" @click="showTweets"></bar-chart>
         </div>
     </div>
 </template>
@@ -31,6 +31,8 @@ export default {
     }
   },
   methods: {
+    showTweets (d) {
+    },
     setData (data) {
       if (this.isFilterNeutral) {
         this.sentimentTweets = data.filter(d => d.polarity !== 0)

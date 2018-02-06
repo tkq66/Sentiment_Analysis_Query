@@ -22,7 +22,7 @@ export default {
   props: {
     bin: {
       type: Number,
-      default: 100
+      default: 20
     },
     tweetData: {
       type: Array,
@@ -88,9 +88,6 @@ export default {
   },
   watch: {
     categorizedDataFrequency (newVal, oldVal) {
-      if (!this.isReadyToPlot) {
-        return
-      }
       this.plot(newVal)
     }
   },
@@ -124,7 +121,14 @@ export default {
              ((index === maxIndex) && (value > min)) ||
              ((value >= min) && (value < max))
     },
+    getDataFromBinIndex (index) {
+      return this.categorizedData[index]
+    },
     plot (data) {
+      if (!this.isReadyToPlot) {
+        return
+      }
+
       let width = document.querySelector('#' + this.chartId).clientWidth
       let height = (width / this.goldenRatio) + (this.margin.top + this.margin.top)
       d3.select('#' + this.chartId)
@@ -165,6 +169,7 @@ export default {
         .attr('width', xScale.bandwidth())
         .attr('height', 0)
         .attr('transform', d => 'translate(' + [xScale(d.bin), chartHeight] + ')')
+        .on('click', (d, i) => { this.$emit('click', this.getDataFromBinIndex(i)) })
       chartLayer.selectAll('.bar')
         .transition(transition)
         .attr('height', d => chartHeight - yScale(d.count) + this.delta)
