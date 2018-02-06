@@ -1,10 +1,19 @@
 <template>
-  <div :id="parentId" class="fit foreground">
-      <div :id="chartId"></div>
+  <div :id="parentId" class="fit layout-padding foreground">
+      <q-card color="grey-7">
+          <q-card-main>
+              <div :id="chartId"></div>
+          </q-card-main>
+      </q-card>
+      </div>
   </div>
 </template>
 
 <script>
+import {
+  QCard,
+  QCardMain
+} from 'quasar'
 import colormap from 'colormap'
 import * as d3 from 'd3'
 
@@ -20,16 +29,24 @@ export default {
       required: true
     }
   },
+  components: {
+    QCard,
+    QCardMain
+  },
   data () {
     return {
       parentId: 'bar_chart_parent_' + Date.now(),
+      backgroundId: 'bar_chart_background' + Date.now(),
       chartId: 'bar_chart_' + Date.now(),
       range: 2,
       min: -1,
       max: 1,
       delta: 0.01,
       positiveColorEndPoint: [96, 255, 157, 1],
-      negativeColorEndPoint: [255, 96, 96, 1]
+      negativeColorEndPoint: [255, 96, 96, 1],
+      margin: { top: 5, left: 5, bottom: 5, right: 5 },
+      goldenRatio: 1.61803398875,
+      isReadyToPlot: false
     }
   },
   computed: {
@@ -54,17 +71,27 @@ export default {
           , [])
         .splice(0, this.bin)
     },
+    binRangeLabel () {
+      return this.binRange.map(range =>
+        range.map(endPoint =>
+          endPoint.toFixed(2))
+          .join('-'))
+    },
     categorizedData () {
       return this.getBinData(this.tweetData, this.binRange)
     },
     categorizedDataFrequency () {
-      return this.categorizedData.map(v => v.length)
-    },
-    dataFreqMin () {
-      return Math.min(...this.categorizedDataFrequency)
-    },
-    dataFreqMax () {
-      return Math.max(...this.categorizedDataFrequency)
+      return this.categorizedData
+        .map(bin => bin.length)
+        .map((binCount, i) => ({ bin: this.binRangeLabel[i], count: binCount }))
+    }
+  },
+  watch: {
+    categorizedDataFrequency (newVal, oldVal) {
+      if (!this.isReadyToPlot) {
+        return
+      }
+      this.plot(newVal)
     }
   },
   methods: {
@@ -96,52 +123,55 @@ export default {
       return ((index === minIndex) && (value < max)) ||
              ((index === maxIndex) && (value > min)) ||
              ((value >= min) && (value < max))
+    },
+    plot (data) {
+      let width = document.querySelector('#' + this.chartId).clientWidth
+      let height = (width / this.goldenRatio) + (this.margin.top + this.margin.top)
+      d3.select('#' + this.chartId)
+        .style('height', height + 'px')
+
+      let chartWidth = width - (this.margin.left + this.margin.right)
+      let chartHeight = chartWidth / this.goldenRatio
+
+      let xScale = d3.scaleBand()
+        .domain(data.map(d => d.bin))
+        .range([0, chartWidth])
+      let yScale = d3.scaleLinear()
+        .domain([d3.min(data, d => d.count), d3.max(data, d => d.count)])
+        .range([chartHeight, 0])
+      let transition = d3.transition()
+        .duration(1000)
+        .ease(d3.easeLinear)
+        .on('start', d => { console.log('transition begin') })
+        .on('end', d => { console.log('transition end') })
+
+      let svg = d3.select('#' + this.chartId).append('svg')
+        .attr('width', width)
+        .attr('height', height)
+      let chartLayer = svg.append('g')
+        .classed('chartLayer', true)
+        .attr('width', chartWidth)
+        .attr('height', chartHeight)
+        .attr('transform', 'translate(' + [this.margin.left, this.margin.top] + ')')
+      let bar = chartLayer.selectAll('.bar').data(data)
+      bar.exit()
+        .remove()
+      bar.enter()
+        .append('rect')
+        .classed('bar', true)
+        .merge(bar)
+        .attr('fill', (d, i) => this.colors[i])
+        .attr('width', xScale.bandwidth())
+        .attr('height', 0)
+        .attr('transform', d => 'translate(' + [xScale(d.bin), chartHeight] + ')')
+      chartLayer.selectAll('.bar')
+        .transition(transition)
+        .attr('height', d => chartHeight - yScale(d.count))
+        .attr('transform', d => 'translate(' + [xScale(d.bin), yScale(d.count)] + ')')
     }
   },
   mounted () {
-    let margin = 20
-    let goldenRatio = 1.61803398875
-    let chartWidth = document.getElementById(this.parentId).offsetWidth - (margin * 2)
-    let chartHeight = chartWidth / goldenRatio
-    // let barPadding = 2
-    // let barWidth = (chartWidth / this.bin) - barPadding
-    let yScale = d3.scaleLinear()
-      .domain([this.dataFreqMin, this.dataFreqMax])
-      .range([0, chartHeight])
-    let xScale = d3.scaleBand()
-      .domain([0, this.bin])
-      .range([0, chartWidth])
-
-    console.log(document.getElementById(this.parentId).offsetWidth)
-    console.log(chartWidth)
-
-    let svg = d3.select('#' + this.chartId)
-      .style('position', 'relative')
-      .style('width', chartWidth + 'px')
-      .style('height', chartHeight + 'px')
-      .style('top', margin + 'px')
-      .style('left', margin + 'px')
-      .style('right', margin + 'px')
-      .style('background', 'white')
-
-    svg.selectAll('rect')
-      .data(this.categorizedDataFrequency)
-      .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', (d, i) => xScale(d))
-      .attr('y', (d, i) => chartHeight)
-      .attr('width', (d, i) => xScale.bandwidth())
-      .attr('fill', (d, i) => this.colors[i])
-      .attr('height', 0)
-      .transition()
-      .duration(1500)
-      .attr('y', function (d, i) {
-        return chartHeight - yScale(d)
-      })
-      .attr('height', function (d, i) {
-        return yScale(d)
-      })
+    this.isReadyToPlot = true
   }
 }
 </script>
