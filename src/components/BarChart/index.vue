@@ -1,11 +1,10 @@
 <template>
-  <div :id="parentId" class="fit layout-padding foreground">
+  <div :id="parentId" class="fit foreground">
       <q-card color="grey-7">
           <q-card-main>
               <div :id="chartId"></div>
           </q-card-main>
       </q-card>
-      </div>
   </div>
 </template>
 
@@ -169,7 +168,13 @@ export default {
         .attr('width', xScale.bandwidth())
         .attr('height', 0)
         .attr('transform', d => 'translate(' + [xScale(d.bin), chartHeight] + ')')
-        .on('click', (d, i) => { this.$emit('click', this.getDataFromBinIndex(i)) })
+        .on('click', (d, i) => {
+          this.$emit('click',
+            {
+              data: this.getDataFromBinIndex(i),
+              label: 'Polarity: ' + d.bin + ' Total: ' + d.count
+            })
+        })
       chartLayer.selectAll('.bar')
         .transition(transition)
         .attr('height', d => chartHeight - yScale(d.count) + this.delta)

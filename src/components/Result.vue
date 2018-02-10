@@ -1,9 +1,19 @@
 <template>
     <div class="absolute fit">
         <vue-particles class="absolute fit" color="#dedede"></vue-particles>
-        <div class="row">
-            <div class="col">PIE-CHART</div>
-            <bar-chart class="col" :tweetData="sentimentTweets" @click="showTweets"></bar-chart>
+        <div class="row fit layout-padding">
+            <div class="col">
+                <div class="row">
+                    <div>PIE-CHART</div>
+                    <div>PIE-CHART TWEETS</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <bar-chart :tweetData="sentimentTweets" @click="showTweets"></bar-chart>
+                    <tweets class="col" :tweetData="barChartTweets" :header="barChartTitle"></tweets>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -15,6 +25,7 @@ import {
 } from 'quasar'
 import { Analysis } from 'src/api'
 import BarChart from './BarChart'
+import Tweets from './Tweets'
 
 export default {
   name: 'Result',
@@ -22,16 +33,22 @@ export default {
     'searchText'
   ],
   components: {
-    BarChart
+    BarChart,
+    Tweets
   },
   data () {
     return {
       isFilterNeutral: true,
+      barChartTweets: [],
+      barChartTitle: 'None selected',
       sentimentTweets: []
     }
   },
   methods: {
     showTweets (d) {
+      this.barChartTweets = d.data
+      this.barChartTitle = d.label
+      console.log(d.data)
     },
     setData (data) {
       if (this.isFilterNeutral) {
