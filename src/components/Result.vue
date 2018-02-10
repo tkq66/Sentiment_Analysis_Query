@@ -1,14 +1,15 @@
 <template>
     <div class="absolute fit">
         <vue-particles class="absolute fit" color="#dedede"></vue-particles>
-        <div class="row fit layout-padding">
+        <div class="row text-white justify-center search-title">{{ searchText }}</div>
+        <div class="row fit analytics-results layout-padding">
             <div class="col">
                 <div class="row">
-                    <div>PIE-CHART</div>
+                    <pie-chart :tweetData="sentimentTweets" @click="showTweets"></pie-chart>
                     <div>PIE-CHART TWEETS</div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col bar-chart-result">
                 <div class="row">
                     <bar-chart :tweetData="sentimentTweets" @click="showTweets"></bar-chart>
                     <tweets class="col" :tweetData="barChartTweets" :header="barChartTitle"></tweets>
@@ -25,6 +26,7 @@ import {
 } from 'quasar'
 import { Analysis } from 'src/api'
 import BarChart from './BarChart'
+import PieChart from './PieChart'
 import Tweets from './Tweets'
 
 export default {
@@ -34,6 +36,7 @@ export default {
   ],
   components: {
     BarChart,
+    PieChart,
     Tweets
   },
   data () {
@@ -48,7 +51,6 @@ export default {
     showTweets (d) {
       this.barChartTweets = d.data
       this.barChartTitle = d.label
-      console.log(d.data)
     },
     setData (data) {
       if (this.isFilterNeutral) {
@@ -90,6 +92,19 @@ export default {
 
     .foreground{
         z-index: 999;
+    }
+
+    .search-title{
+        padding: 20px;
+        font-size: 5em;
+    }
+
+    .analytics-results{
+        padding-top: 0px !important;
+    }
+
+    .bar-chart-result{
+        height: 100%;
     }
 
 </style>

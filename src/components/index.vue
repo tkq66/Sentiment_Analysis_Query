@@ -1,5 +1,5 @@
 <template>
-  <q-layout ref="layout" view="hhh lpr fff" class="bg-grey-8">
+  <q-layout ref="layout" view="hhh lpr fff" class="hide-scroll bg-grey-8">
 
       <q-toolbar slot="header" color="grey-10">
         <q-toolbar-title>
@@ -36,4 +36,9 @@ export default {
 </script>
 
 <style lang="stylus">
+
+    .hide-scroll{
+        overflow: hidden;
+    }
+
 </style>

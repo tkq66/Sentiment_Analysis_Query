@@ -51,8 +51,7 @@ export default {
 
     .tweet-box{
         width: 100%;
-        height: 370px;
-        /* overflow: scroll; */
+        height: 270px;
     }
 
 </style>
