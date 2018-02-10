@@ -91,13 +91,25 @@ export default {
       return result
     },
     getCategoryFromVal (val) {
-      return (val > 0) ? this.positiveCategory : ((val < 0) ? this.negativeCategory : this.neutralCategory)
+      return (val > 0) ?
+        this.positiveCategory :
+          ((val < 0) ?
+            this.negativeCategory :
+            this.neutralCategory)
     },
     getCategoryIndexFromVal (val) {
-      return (val === this.positiveCategory) ? 2 : ((val === this.negativeCategory) ? 0 : 1)
+      return (val === this.positiveCategory) ?
+        2 :
+          ((val === this.negativeCategory) ?
+            0 :
+            1)
     },
     getTweetsFromCategory (category) {
-      return this.tweetData.filter(tweet => (tweet === this.positiveCategory) ? (tweet['polarity'] > 0) : ((tweet === this.negativeCategory) ? (tweet['polarity'] < 0) : (tweet['polarity'] === 0)))
+      return this.tweetData.filter(tweet => (category === this.positiveCategory) ?
+        (tweet['polarity'] > 0) :
+          ((category === this.negativeCategory) ?
+            (tweet['polarity'] < 0) :
+            (tweet['polarity'] === 0)))
     },
     plot (data) {
 
