@@ -114,4 +114,8 @@ export default {
         height: 100%;
     }
 
+    .q-loading{
+      z-index: 1000;
+    }
+
 </style>
