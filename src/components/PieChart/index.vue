@@ -185,4 +185,12 @@ export default {
         z-index: 999;
     }
 
+    g.chartLayer path{
+        opacity: 1;
+    }
+
+    g.chartLayer path:hover{
+        opacity: 0.5 !important;
+    }
+
 </style>

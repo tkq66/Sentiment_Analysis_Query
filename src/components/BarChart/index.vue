@@ -208,4 +208,12 @@ export default {
         stroke: #ccc;
     }
 
+    g.chartLayer rect{
+        opacity: 1;
+    }
+
+    g.chartLayer rect:hover{
+        opacity: 0.5 !important;
+    }
+
 </style>
