@@ -5,7 +5,7 @@
         <div class="row fit analytics-results layout-padding">
             <div class="col">
                 <div class="row">
-                    <pie-chart :tweetData="sentimentTweets" @click="showTweets"></pie-chart>
+                    <pie-chart :tweetData="sentimentTweets"></pie-chart>
                     <div>PIE-CHART TWEETS</div>
                 </div>
             </div>

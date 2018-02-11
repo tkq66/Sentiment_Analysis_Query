@@ -21,7 +21,7 @@ export default {
   props: {
     bin: {
       type: Number,
-      default: 20
+      default: 5
     },
     tweetData: {
       type: Array,
@@ -123,7 +123,7 @@ export default {
     getDataFromBinIndex (index) {
       return this.categorizedData[index]
     },
-    plot (data) {
+    plot (dataList) {
       if (!this.isReadyToPlot) {
         return
       }
@@ -137,10 +137,10 @@ export default {
       let chartHeight = chartWidth / this.goldenRatio
 
       let xScale = d3.scaleBand()
-        .domain(data.map(d => d.bin))
+        .domain(dataList.map(d => d.bin))
         .range([0, chartWidth])
       let yScale = d3.scaleLinear()
-        .domain([d3.min(data, d => d.count), d3.max(data, d => d.count)])
+        .domain([d3.min(dataList, d => d.count), d3.max(dataList, d => d.count)])
         .range([chartHeight, 0])
       let transition = d3.transition()
         .duration(1000)
@@ -157,7 +157,7 @@ export default {
         .attr('height', chartHeight)
         .attr('transform', 'translate(' + [this.margin.left, this.margin.top] + ')')
 
-      let bar = chartLayer.selectAll('.bar').data(data)
+      let bar = chartLayer.selectAll('.bar').data(dataList)
       bar.exit()
         .remove()
       bar.enter()

@@ -2,7 +2,7 @@
   <div :id="parentId" class="fit foreground">
       <q-card color="grey-7">
           <q-card-main>
-              <div :id="chartId">{{ categorizedPercentageData }}</div>
+              <div :id="chartId"></div>
           </q-card-main>
       </q-card>
   </div>
@@ -14,7 +14,7 @@ import {
   QCardMain
 } from 'quasar'
 import colormap from 'colormap'
-// import * as d3 from 'd3'
+import * as d3 from 'd3'
 
 export default {
   name: 'BarChart',
@@ -40,6 +40,7 @@ export default {
       positiveColorEndPoint: [96, 255, 157, 1],
       negativeColorEndPoint: [255, 96, 96, 1],
       margin: { top: 10, left: 20, bottom: 10, right: 10 },
+      goldenRatio: 1.61803398875,
       isReadyToPlot: false
     }
   },
@@ -61,25 +62,32 @@ export default {
       return [
         {
           label: this.positiveCategory,
-          value: (100 * this.categoriesCount[2] / this.tweetData.length).toFixed(2)
+          value: this.categoriesCount[2]
         },
         {
           label: this.neutralCategory,
-          value: (100 * this.categoriesCount[1] / this.tweetData.length).toFixed(2)
+          value: this.categoriesCount[1]
         },
         {
           label: this.negativeCategory,
-          value: (100 * this.categoriesCount[0] / this.tweetData.length).toFixed(2)
+          value: this.categoriesCount[0]
         }
       ]
     }
   },
   watch: {
-    categorizedDataFrequency (newVal, oldVal) {
+    categorizedPercentageData (newVal, oldVal) {
       this.plot(newVal)
     }
   },
   methods: {
+    getColorFromCategory (category) {
+      return (category === this.positiveCategory)
+        ? this.colors[2]
+        : ((category === this.negativeCategory)
+          ? this.colors[0]
+          : this.colors[1])
+    },
     categorizeDataPoints (data) {
       return data.map(v => this.getCategoryFromVal(v['polarity']))
     },
@@ -111,8 +119,52 @@ export default {
           ? (tweet['polarity'] < 0)
           : (tweet['polarity'] === 0)))
     },
-    plot (data) {
+    plot (dataList) {
+      if (!this.isReadyToPlot) {
+        return
+      }
 
+      let width = document.querySelector('#' + this.chartId).clientWidth
+      let height = width
+      let halfWidth = (width / 2)
+      let radius = halfWidth - (this.margin.top + this.margin.bottom + this.margin.left + this.margin.right)
+      d3.select('#' + this.chartId)
+        .style('height', height + 'px')
+
+      let chartWidth = width - (this.margin.left + this.margin.right)
+      let chartHeight = chartWidth / this.goldenRatio
+
+      let dataArcs = d3.pie()
+        .value(d => d.value)(this.categorizedPercentageData)
+      let arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius)
+
+      let svg = d3.select('#' + this.chartId).append('svg')
+        .attr('width', width)
+        .attr('height', height)
+      let chartLayer = svg.append('g')
+        .classed('chartLayer', true)
+        .attr('width', chartWidth)
+        .attr('height', chartHeight)
+        .attr('transform', 'translate(' + [halfWidth, halfWidth] + ')')
+
+      let path = chartLayer.selectAll('path')
+        .data(dataArcs)
+      path.exit()
+        .remove()
+      path.enter()
+        .append('path')
+        .attr('fill', d => this.getColorFromCategory(d.data.label))
+        .transition()
+        .duration(1000)
+        .attrTween('d', d => {
+          let i = d3.interpolate(d.startAngle + 0.1, d.endAngle)
+          return t => {
+            d.endAngle = i(t)
+            return arc(d)
+          }
+        })
     }
   },
   mounted () {
