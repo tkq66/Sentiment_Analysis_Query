@@ -55,7 +55,6 @@ export default {
       this.barChartTitle = d.label
     },
     showPieChartTweets (d) {
-      console.log(d)
       this.pieChartTweets = d.data
       this.pieChartTitle = d.label
     },

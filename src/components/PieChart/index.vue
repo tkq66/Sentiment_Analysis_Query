@@ -62,15 +62,15 @@ export default {
       return [
         {
           label: this.positiveCategory,
-          value: this.categoriesCount[2]
+          value: (100 * this.categoriesCount[2] / this.tweetData.length).toFixed(2)
         },
         {
           label: this.neutralCategory,
-          value: this.categoriesCount[1]
+          value: (100 * this.categoriesCount[1] / this.tweetData.length).toFixed(2)
         },
         {
           label: this.negativeCategory,
-          value: this.categoriesCount[0]
+          value: (100 * this.categoriesCount[0] / this.tweetData.length).toFixed(2)
         }
       ]
     }
