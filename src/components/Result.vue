@@ -5,13 +5,13 @@
         <div class="row fit analytics-results layout-padding">
             <div class="col">
                 <div class="row">
-                    <pie-chart :tweetData="sentimentTweets"></pie-chart>
-                    <div>PIE-CHART TWEETS</div>
+                    <pie-chart :tweetData="sentimentTweets" @click="showPieChartTweets"></pie-chart>
+                    <tweets class="col" :tweetData="pieChartTweets" :header="pieChartTitle" :boxHeight="226"></tweets>
                 </div>
             </div>
             <div class="col bar-chart-result">
                 <div class="row">
-                    <bar-chart :tweetData="sentimentTweets" @click="showTweets"></bar-chart>
+                    <bar-chart :tweetData="sentimentTweets" @click="showBarChartTweets"></bar-chart>
                     <tweets class="col" :tweetData="barChartTweets" :header="barChartTitle"></tweets>
                 </div>
             </div>
@@ -42,15 +42,22 @@ export default {
   data () {
     return {
       isFilterNeutral: true,
+      pieChartTweets: [],
+      pieChartTitle: 'None selected',
       barChartTweets: [],
       barChartTitle: 'None selected',
       sentimentTweets: []
     }
   },
   methods: {
-    showTweets (d) {
+    showBarChartTweets (d) {
       this.barChartTweets = d.data
       this.barChartTitle = d.label
+    },
+    showPieChartTweets (d) {
+      console.log(d)
+      this.pieChartTweets = d.data
+      this.pieChartTitle = d.label
     },
     setData (data) {
       if (this.isFilterNeutral) {

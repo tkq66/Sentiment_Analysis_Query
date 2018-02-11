@@ -155,6 +155,13 @@ export default {
       path.enter()
         .append('path')
         .attr('fill', d => this.getColorFromCategory(d.data.label))
+        .on('click', (d, i) => {
+          this.$emit('click',
+            {
+              data: this.getTweetsFromCategory(d.data.label),
+              label: d.data.label + ' ' + d.data.value + '%'
+            })
+        })
         .transition()
         .duration(1000)
         .attrTween('d', d => {
