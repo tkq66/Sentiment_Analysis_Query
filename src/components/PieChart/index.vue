@@ -124,15 +124,14 @@ export default {
         return
       }
 
+      // Set the height as half of its parent
       let width = document.querySelector('#' + this.chartId).clientWidth
-      let height = width
-      let halfWidth = (width / 2)
-      let radius = halfWidth - (this.margin.top + this.margin.bottom + this.margin.left + this.margin.right)
+      let height = (document.querySelector('#' + this.parentId).parentElement.parentElement.clientHeight / 2) - (this.margin.top + this.margin.bottom)
+      let chartWidth = width - (this.margin.left + this.margin.right)
+      let chartHeight = height - (this.margin.top + this.margin.bottom)
+      let radius = height / 2
       d3.select('#' + this.chartId)
         .style('height', height + 'px')
-
-      let chartWidth = width - (this.margin.left + this.margin.right)
-      let chartHeight = chartWidth / this.goldenRatio
 
       let dataArcs = d3.pie()
         .value(d => d.value)(this.categorizedPercentageData)
@@ -147,7 +146,7 @@ export default {
         .classed('chartLayer', true)
         .attr('width', chartWidth)
         .attr('height', chartHeight)
-        .attr('transform', 'translate(' + [halfWidth, halfWidth] + ')')
+        .attr('transform', 'translate(' + [width / 2, radius] + ')')
 
       let path = chartLayer.selectAll('path')
         .data(dataArcs)

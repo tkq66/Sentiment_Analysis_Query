@@ -21,7 +21,7 @@ export default {
   props: {
     bin: {
       type: Number,
-      default: 5
+      default: 100
     },
     tweetData: {
       type: Array,
@@ -128,6 +128,7 @@ export default {
         return
       }
 
+      // Set the chart area as a golden traingle ration from the width
       let width = document.querySelector('#' + this.chartId).clientWidth
       let height = (width / this.goldenRatio) + (this.margin.top + this.margin.top)
       d3.select('#' + this.chartId)
